@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { universalReadTasks, universalWriteTasks } from '@/lib/github/storage';
 import type { Priority } from '@/types/agents';
-
-const TASKS_PATH = path.join(process.cwd(), '.opencode', 'tasks.json');
 
 const AGENT_META: Record<string, {
   name: string; role: string; color: string; description: string;
@@ -80,12 +77,8 @@ export async function GET() {
       ...meta,
     }));
 
-    let tasks: unknown[] = [];
-    if (fs.existsSync(TASKS_PATH)) {
-      const raw = fs.readFileSync(TASKS_PATH, 'utf-8');
-      const parsed = JSON.parse(raw);
-      tasks = normalizeTasks(parsed.tasks ?? []);
-    }
+    let tasks = await universalReadTasks();
+    tasks = normalizeTasks(tasks);
 
     return NextResponse.json({ ok: true, data: { agents, tasks, stats: computeStats(agents, tasks) } });
   } catch (err) {
@@ -102,11 +95,9 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ ok: false, error: 'taskId and updates are required' }, { status: 400 });
     }
 
-    const raw = fs.readFileSync(TASKS_PATH, 'utf-8');
-    const data = JSON.parse(raw);
-    const tasks = data.tasks ?? [];
-
+    const tasks = await universalReadTasks();
     const taskIndex = tasks.findIndex((t: any) => t.id === taskId);
+
     if (taskIndex === -1) {
       return NextResponse.json({ ok: false, error: `Task ${taskId} not found` }, { status: 404 });
     }
@@ -114,7 +105,7 @@ export async function PATCH(req: Request) {
     const allowedFields = ['status', 'priority', 'order', 'title', 'description', 'assignee'];
     for (const key of Object.keys(updates)) {
       if (allowedFields.includes(key)) {
-        tasks[taskIndex][key] = updates[key];
+        (tasks[taskIndex] as any)[key] = updates[key];
       }
     }
 
@@ -123,8 +114,7 @@ export async function PATCH(req: Request) {
       tasks.forEach((t: any, i: number) => { t.order = i; });
     }
 
-    data.tasks = tasks;
-    fs.writeFileSync(TASKS_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    await universalWriteTasks(tasks);
 
     return NextResponse.json({ ok: true, data: { task: tasks[taskIndex] } });
   } catch (err) {

@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { universalReadTasks, universalWriteTasks, universalReadConfig } from '@/lib/github/storage';
 import type { Priority } from '@/types/agents';
-
-const TASKS_PATH = path.join(process.cwd(), '.opencode', 'tasks.json');
-const CONFIG_PATH = path.join(process.cwd(), '.opencode', 'config.json');
 
 const AGENT_KEYWORDS: Record<string, string[]> = {
   frontend: ['ui', 'frontend', 'page', 'component', 'style', 'css', 'layout', 'responsive', 'animation', 'mobile', 'design', 'icon'],
@@ -63,19 +59,9 @@ function generateId(existingIds: string[]): string {
   return `MZ-${String(next).padStart(3, '0')}`;
 }
 
-function readTasks(): { tasks: any[] } {
-  const raw = fs.readFileSync(TASKS_PATH, 'utf-8');
-  return JSON.parse(raw);
-}
-
-function writeTasks(data: { tasks: any[] }) {
-  fs.writeFileSync(TASKS_PATH, JSON.stringify(data, null, 2), 'utf-8');
-}
-
 function parsePrioritizeCommand(message: string, tasks: any[]) {
   const lower = message.toLowerCase();
 
-  // Pattern: "prioritize X over Y" or "prioritize task X over task Y"
   const prioritizeOver = lower.match(/prioritize\s+(?:task\s+)?([a-z0-9-]+)\s+over\s+(?:task\s+)?([a-z0-9-]+)/i);
   if (prioritizeOver) {
     const [, higherId, lowerId] = prioritizeOver;
@@ -87,7 +73,6 @@ function parsePrioritizeCommand(message: string, tasks: any[]) {
     return { action: 'error', message: `Could not find one or both tasks: ${higherId}, ${lowerId}` };
   }
 
-  // Pattern: "make X high/medium/low priority"
   const setPriority = lower.match(/(?:make|set|change)\s+(?:task\s+)?([a-z0-9-]+)\s+(high|medium|low)\s+priority/i);
   if (setPriority) {
     const [, taskId, priority] = setPriority;
@@ -101,20 +86,11 @@ function parsePrioritizeCommand(message: string, tasks: any[]) {
   return null;
 }
 
-function readConfig() {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
-    }
-  } catch {}
-  return {};
-}
-
 async function dispatchToGitHub(task: any): Promise<string | null> {
-  const config = readConfig();
-  const pat = config.githubPat;
-  const owner = config.githubRepoOwner;
-  const repo = config.githubRepoName;
+  const config = await universalReadConfig();
+  const pat = config.githubPat || process.env.GITHUB_PAT;
+  const owner = config.githubRepoOwner || process.env.GITHUB_OWNER;
+  const repo = config.githubRepoName || process.env.GITHUB_REPO;
   if (!pat || !owner || !repo) return null;
 
   try {
@@ -143,13 +119,9 @@ async function dispatchToGitHub(task: any): Promise<string | null> {
 
     if (res.ok) {
       return `https://github.com/${owner}/${repo}/actions`;
-    } else {
-      const body = await res.text();
-      console.error('GitHub dispatch failed:', res.status, body);
-      return null;
     }
-  } catch (err) {
-    console.error('GitHub dispatch error:', err);
+    return null;
+  } catch {
     return null;
   }
 }
@@ -161,8 +133,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Message is required' }, { status: 400 });
     }
 
-    const data = readTasks();
-    const tasks = data.tasks ?? [];
+    const tasks = await universalReadTasks();
 
     // Check if this is a prioritization command
     const priorityCmd = parsePrioritizeCommand(message, tasks);
@@ -185,12 +156,9 @@ export async function POST(req: Request) {
         const higherOrder = higher.order;
         higher.order = lower.order;
         lower.order = higherOrder;
-        // Re-sort tasks by order
         tasks.sort((a: any, b: any) => a.order - b.order);
-        // Re-assign sequential order
         tasks.forEach((t: any, i: number) => { t.order = i; });
-        data.tasks = tasks;
-        writeTasks(data);
+        await universalWriteTasks(tasks);
 
         return NextResponse.json({
           ok: true,
@@ -206,7 +174,7 @@ export async function POST(req: Request) {
         const { taskId, priority } = priorityCmd as { action: 'setPriority'; taskId: string; priority: Priority };
         const task = tasks.find((t: any) => t.id === taskId);
         task.priority = priority;
-        writeTasks(data);
+        await universalWriteTasks(tasks);
 
         return NextResponse.json({
           ok: true,
@@ -270,10 +238,8 @@ export async function POST(req: Request) {
     };
 
     tasks.push(newTask);
-    data.tasks = tasks;
-    writeTasks(data);
+    await universalWriteTasks(tasks);
 
-    // Dispatch to GitHub Actions if configured
     const dispatchUrl = await dispatchToGitHub(newTask);
     const dispatchMsg = dispatchUrl
       ? `\n\n🚀 **Auto-dispatched to CI** — AI agent is working on it now. [View progress](${dispatchUrl})`

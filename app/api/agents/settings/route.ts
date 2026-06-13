@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const CONFIG_PATH = path.join(process.cwd(), '.opencode', 'config.json');
+import { universalReadConfig, universalWriteConfig } from '@/lib/github/storage';
 
 export interface RepoConfig {
   repoUrl: string;
@@ -19,7 +16,7 @@ export interface RepoConfig {
 const DEFAULT_CONFIG: RepoConfig = {
   repoUrl: '',
   branch: 'main',
-  projectPath: process.cwd(),
+  projectPath: process.env.PWD || process.cwd(),
   gitUserName: '',
   gitUserEmail: '',
   autoSync: false,
@@ -28,25 +25,10 @@ const DEFAULT_CONFIG: RepoConfig = {
   githubRepoName: '',
 };
 
-function readConfig(): RepoConfig {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      const raw = fs.readFileSync(CONFIG_PATH, 'utf-8');
-      return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
-    }
-  } catch {}
-  return DEFAULT_CONFIG;
-}
-
-function writeConfig(config: RepoConfig) {
-  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
-  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
-}
-
 export async function GET() {
   try {
-    const config = readConfig();
-    return NextResponse.json({ ok: true, data: config });
+    const config = await universalReadConfig();
+    return NextResponse.json({ ok: true, data: { ...DEFAULT_CONFIG, ...config } });
   } catch (err) {
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
   }
@@ -56,7 +38,7 @@ export async function PATCH(req: Request) {
   try {
     const body = await req.json();
     const allowed = ['repoUrl', 'branch', 'projectPath', 'gitUserName', 'gitUserEmail', 'autoSync', 'githubPat', 'githubRepoOwner', 'githubRepoName'];
-    const current = readConfig();
+    const current = await universalReadConfig();
 
     for (const key of Object.keys(body)) {
       if (allowed.includes(key)) {
@@ -64,8 +46,8 @@ export async function PATCH(req: Request) {
       }
     }
 
-    writeConfig(current);
-    return NextResponse.json({ ok: true, data: current });
+    await universalWriteConfig(current);
+    return NextResponse.json({ ok: true, data: { ...DEFAULT_CONFIG, ...current } });
   } catch (err) {
     return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
   }

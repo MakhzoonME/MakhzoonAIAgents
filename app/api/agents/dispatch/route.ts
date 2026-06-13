@@ -1,24 +1,13 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const TASKS_PATH = path.join(process.cwd(), '.opencode', 'tasks.json');
-const CONFIG_PATH = path.join(process.cwd(), '.opencode', 'config.json');
-
-function readConfig() {
-  try {
-    if (fs.existsSync(CONFIG_PATH)) {
-      return JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf-8'));
-    }
-  } catch {}
-  return {};
-}
+import { universalReadTasks, universalReadConfig } from '@/lib/github/storage';
 
 async function dispatchToGitHub(task: any): Promise<{ ok: boolean; url?: string; error?: string }> {
-  const config = readConfig();
-  const pat = config.githubPat;
-  const owner = config.githubRepoOwner;
-  const repo = config.githubRepoName;
+  const config = await universalReadConfig();
+  const pat = config.githubPat || process.env.GITHUB_PAT;
+  const owner = config.githubRepoOwner || process.env.GITHUB_OWNER;
+  const repo = config.githubRepoName || process.env.GITHUB_REPO;
+  const branch = config.branch || process.env.GITHUB_BRANCH || 'main';
+
   if (!pat || !owner || !repo) {
     return { ok: false, error: 'GitHub PAT or repo not configured. Go to Settings.' };
   }
@@ -41,7 +30,7 @@ async function dispatchToGitHub(task: any): Promise<{ ok: boolean; url?: string;
             description: task.description,
             assignee: task.assignee,
             priority: task.priority,
-            branch: config.branch || 'main',
+            branch,
           },
         }),
       }
@@ -64,9 +53,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'taskId is required' }, { status: 400 });
     }
 
-    const raw = fs.readFileSync(TASKS_PATH, 'utf-8');
-    const data = JSON.parse(raw);
-    const tasks = data.tasks ?? [];
+    const tasks = await universalReadTasks();
     const task = tasks.find((t: any) => t.id === taskId);
 
     if (!task) {
