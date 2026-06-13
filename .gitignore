@@ -1,0 +1,80 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+**/node_modules/
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# cloudflare workers build output + wrangler local state
+.open-next/
+.wrangler/
+
+# supabase CLI local state (version tracking, temp files)
+supabase/.temp/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# real env files for any environment (only commit .env*.example)
+.env
+.env.development
+.env.staging
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# claude code session data
+.claude/
+
+# firebase service-account JSON (never commit)
+*firebase-adminsdk*.json
+serviceAccount*.json
+ruflo/
+
+# local runtime state from RuFlo / agentic-flow / claude-flow MCP
+ruvector.db
+ruvector.db-*
+functions/ruvector.db
+functions/ruvector.db-*
+.swarm/
+agentdb.rvf
+agentdb.rvf.lock
+
+# handoff/export archives
+Makhzoon-handoff.zip
+
+# stray shell brace-expansion / accidental output files
+{,
+x.collectionGroup
+*.bak
+*.orig
+
+# Design canvas files (handoff reference — not production code)
+*Journeys.html
+
