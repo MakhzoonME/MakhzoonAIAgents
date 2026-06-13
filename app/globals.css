@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 0.625rem;
+  --primary-700: #4338CA;
+  --primary-600: #4F46E5;
+  --primary-500: #6366F1;
+  --primary-400: #818CF8;
+  --primary-100: #E0E7FF;
+  --primary-50: #EEF2FF;
+
+  --gray-950: #030712;
+  --gray-900: #111827;
+  --gray-800: #1F2937;
+  --gray-700: #374151;
+  --gray-600: #4B5563;
+  --gray-500: #6B7280;
+  --gray-400: #9CA3AF;
+  --gray-300: #D1D5DB;
+  --gray-200: #E5E7EB;
+  --gray-100: #F3F4F6;
+  --gray-50: #F9FAFB;
+  --white: #FFFFFF;
+
+  --green-700: #15803D;
+  --green-600: #16A34A;
+  --green-100: #DCFCE7;
+  --green-50: #F0FDF4;
+
+  --yellow-700: #A16207;
+  --yellow-600: #CA8A04;
+  --yellow-100: #FEF9C3;
+  --yellow-50: #FEFCE8;
+
+  --red-700: #B91C1C;
+  --red-600: #DC2626;
+  --red-100: #FEE2E2;
+  --red-50: #FEF2F2;
+
+  --blue-700: #1D4ED8;
+  --blue-600: #2563EB;
+  --blue-100: #DBEAFE;
+  --blue-50: #EFF6FF;
+
+  --surface-page: #F8FAFC;
+  --surface-card: #FFFFFF;
+  --border-default: #E5E7EB;
+  --border-strong: #D1D5DB;
+
+  --background: #F8FAFC;
+  --foreground: #111827;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}

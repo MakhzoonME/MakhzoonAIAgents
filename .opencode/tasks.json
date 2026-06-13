@@ -33,7 +33,10 @@
       "status": "done",
       "assignee": "backend",
       "requestedBy": "user",
-      "files": ["lib/email/warranty-alert.ts", "locales/messages.ts"],
+      "files": [
+        "lib/email/warranty-alert.ts",
+        "locales/messages.ts"
+      ],
       "branch": "feature/warranty-emails",
       "createdAt": "2026-05-15T10:00:00Z",
       "completedAt": "2026-05-15T14:00:00Z"
@@ -45,7 +48,10 @@
       "status": "in-progress",
       "assignee": "frontend",
       "requestedBy": "partner",
-      "files": ["app/[locale]/[orgSlug]/assets/page.tsx", "components/assets/AssetFilters.tsx"],
+      "files": [
+        "app/[locale]/[orgSlug]/assets/page.tsx",
+        "components/assets/AssetFilters.tsx"
+      ],
       "branch": "feature/asset-filters",
       "createdAt": "2026-05-15T11:00:00Z",
       "completedAt": null
@@ -58,7 +64,10 @@
       "status": "pending",
       "assignee": "backend",
       "requestedBy": "user",
-      "files": ["app/api/reports/inventory-stock/route.ts", "lib/services/reports.service.ts"],
+      "files": [
+        "app/api/reports/inventory-stock/route.ts",
+        "lib/services/reports.service.ts"
+      ],
       "branch": null,
       "createdAt": "2026-05-15T12:00:00Z",
       "completedAt": null
@@ -102,7 +111,9 @@
       "status": "done",
       "assignee": "qa",
       "requestedBy": "user",
-      "files": [".opencode/qa-plan-supabase-cloudflare.md"],
+      "files": [
+        ".opencode/qa-plan-supabase-cloudflare.md"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T10:15:00Z",
       "completedAt": null
@@ -114,7 +125,9 @@
       "status": "done",
       "assignee": "backend",
       "requestedBy": "user",
-      "files": ["app/api/audit-logs/route.ts"],
+      "files": [
+        "app/api/audit-logs/route.ts"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T12:00:00Z",
       "completedAt": "2026-05-16T12:05:00Z"
@@ -126,7 +139,9 @@
       "status": "done",
       "assignee": "backend",
       "requestedBy": "user",
-      "files": ["proxy.ts"],
+      "files": [
+        "proxy.ts"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T12:00:00Z",
       "completedAt": null
@@ -138,7 +153,13 @@
       "status": "done",
       "assignee": "devops",
       "requestedBy": "user",
-      "files": [".env.example", ".env.local.example", ".env.development.example", ".env.staging.example", ".env.production.example"],
+      "files": [
+        ".env.example",
+        ".env.local.example",
+        ".env.development.example",
+        ".env.staging.example",
+        ".env.production.example"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T12:00:00Z",
       "completedAt": "2026-05-16T12:05:00Z"
@@ -150,7 +171,9 @@
       "status": "done",
       "assignee": "devops",
       "requestedBy": "user",
-      "files": ["wrangler.toml"],
+      "files": [
+        "wrangler.toml"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T12:00:00Z",
       "completedAt": null
@@ -162,7 +185,9 @@
       "status": "done",
       "assignee": "qa",
       "requestedBy": "user",
-      "files": [".opencode/qa-plan-supabase-cloudflare.md"],
+      "files": [
+        ".opencode/qa-plan-supabase-cloudflare.md"
+      ],
       "branch": null,
       "createdAt": "2026-05-16T12:00:00Z",
       "completedAt": "2026-05-16T12:10:00Z"
@@ -194,7 +219,10 @@
       "status": "done",
       "assignee": "devops",
       "requestedBy": "user",
-      "files": [".opencode/qa-plan-supabase-cloudflare.md", ".github/workflows/build.yml"],
+      "files": [
+        ".opencode/qa-plan-supabase-cloudflare.md",
+        ".github/workflows/build.yml"
+      ],
       "branch": "DevBranch",
       "createdAt": "2026-05-18T00:00:00Z",
       "completedAt": "2026-05-18T20:30:00Z"
@@ -206,7 +234,9 @@
       "status": "done",
       "assignee": "devops",
       "requestedBy": "user",
-      "files": ["middleware.ts"],
+      "files": [
+        "middleware.ts"
+      ],
       "branch": "DevBranch",
       "createdAt": "2026-05-18T00:00:00Z",
       "completedAt": "2026-05-18T20:30:00Z"
@@ -218,7 +248,10 @@
       "status": "done",
       "assignee": "devops",
       "requestedBy": "user",
-      "files": [".github/workflows/deploy-mirror-functions.yml", ".github/workflows/sync-firestore.yml"],
+      "files": [
+        ".github/workflows/deploy-mirror-functions.yml",
+        ".github/workflows/sync-firestore.yml"
+      ],
       "branch": null,
       "createdAt": "2026-05-18T20:30:00Z",
       "completedAt": "2026-05-20T22:00:00Z"
@@ -240,7 +273,7 @@
       "branch": "DevBranch",
       "createdAt": "2026-05-20T00:00:00Z",
       "completedAt": "2026-05-20T00:00:00Z"
-    }
+    },
     {
       "id": "MZ-017",
       "title": "Replace hardcoded English strings with useT() i18n calls across 8 superadmin page files",
@@ -321,6 +354,52 @@
       "files": [
         "supabase/migrations/0028_performance_indexes.sql"
       ]
+    },
+    {
+      "id": "MZ-021",
+      "title": "Create AI Agents Team Dashboard — UI pages, task board, agent profiles",
+      "description": "Build a web-accessible AI Agents Development Team dashboard: landing page with team overview, agent detail pages, task board with filtering, team stats, and global access via /agents route. Includes: lib/agents/data.ts (static data layer), components/agents/* (AgentCard, TaskBadge, TeamStats), app/agents/* (3 pages), middleware public access, superadmin nav entry.",
+      "status": "done",
+      "assignee": "frontend",
+      "requestedBy": "user",
+      "branch": null,
+      "createdAt": "2026-06-13T20:00:00Z",
+      "completedAt": "2026-06-13T21:00:00Z",
+      "files": [
+        "lib/agents/data.ts",
+        "components/agents/AgentCard.tsx",
+        "components/agents/TaskBadge.tsx",
+        "components/agents/TeamStats.tsx",
+        "app/agents/page.tsx",
+        "app/agents/tasks/page.tsx",
+        "app/agents/[agent]/page.tsx",
+        "app/superadmin/layout.tsx",
+        "middleware.ts"
+      ]
+    },
+    {
+      "id": "MZ-022",
+      "title": "hi i want to change the colors on the pages of this app",
+      "description": "hi i want to change the colors on the pages of this app",
+      "status": "pending",
+      "assignee": "frontend",
+      "requestedBy": "user",
+      "files": [],
+      "branch": null,
+      "createdAt": "2026-06-13T18:51:34.478Z",
+      "completedAt": null
+    },
+    {
+      "id": "MZ-023",
+      "title": "What you can Do on this App",
+      "description": "What you can Do on this App",
+      "status": "pending",
+      "assignee": "frontend",
+      "requestedBy": "user",
+      "files": [],
+      "branch": null,
+      "createdAt": "2026-06-13T19:15:12.490Z",
+      "completedAt": null
     }
   ]
 }
